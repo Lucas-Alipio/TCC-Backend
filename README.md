@@ -27,3 +27,13 @@ python -m venv ./venv
 ```
 source venv/bin/activate
 ```
+### Rodando projeto
+
+<p>
+    Você poderá instalar as dependências e depois rodar o projeto
+</p>
+
+```
+pip install -r requirements.txt
+python app.py
+```
