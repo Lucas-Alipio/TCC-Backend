@@ -23,8 +23,8 @@ def create_user_route():
 
 @blueprint.route('/user', methods=['GET'])
 def find_user_route():
-    response = json.dumps(request.args)
-    return list_user(response)
+    #response = json.dumps(request.args)
+    return list_user()
 
 
 
