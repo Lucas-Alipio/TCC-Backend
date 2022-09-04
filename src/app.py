@@ -1,25 +1,15 @@
 import os
 import json
 
-from flask import Flask, Blueprint, request, jsonify
-from flask_pymongo import MongoClient
+from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 
-from dotenv import load_dotenv
+#from project
+from config import app
+from services.user import create_user, list_user
 
 
-#config
-load_dotenv()
 
-app = Flask(__name__)
-app.env = os.getenv('ENV')
-
-mongo = MongoClient('mongodb+srv://adm:adm@cluster0.oo7i1.mongodb.net/')
-
-bd_table = app.env
-#config
-
-#app
 blueprint = Blueprint('app', __name__, url_prefix='/tcc-api')
 
 CORS(app)
@@ -34,7 +24,22 @@ def create_user_route():
 @blueprint.route('/user', methods=['GET'])
 def find_user_route():
     response = json.dumps(request.args)
-    return find_user(response)
+    return list_user(response)
+
+
+
+@app.route('/')
+def status():
+    return jsonify({
+        "message": "Back-end TCC: Aplicação rodando!!!!!!"
+    })
+
+
+app.register_blueprint(blueprint)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8081))
+    app.run(host='0.0.0.0', port=port)
 
 
 #att requirements.txt
