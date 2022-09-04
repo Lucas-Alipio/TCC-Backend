@@ -1,4 +1,5 @@
 # TCC-Backend
+api: https://qualpreco-api.herokuapp.com/
 
 ### Para rodar seu ambiente deve possuir:
 1. Git Bash <br/>
