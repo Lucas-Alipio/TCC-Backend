@@ -6,7 +6,7 @@ from flask import Response
 
 from config import mongo, bd_table
 
-db = mongo.get_database(bd_table).user
+db = mongo.get_database(bd_table).product
 
 '''----------------------------CREATE PRODUCT----------------------------'''
 def create_product(self):
