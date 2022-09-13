@@ -7,6 +7,7 @@ from flask_cors import CORS
 #from project
 from config import app
 from services.user import create_user, list_user
+from services.product import create_product, list_product
 
 
 
@@ -14,7 +15,7 @@ blueprint = Blueprint('app', __name__, url_prefix='/tcc-api')
 
 CORS(app)
 
-#USER
+'''----------------------------- USER -----------------------------'''
 @blueprint.route('/user', methods=['POST', 'PUT'])
 def create_user_route():
     response = json.dumps(request.json)
@@ -25,6 +26,20 @@ def create_user_route():
 def find_user_route():
     #response = json.dumps(request.args)
     return list_user()
+
+
+
+'''----------------------------- PRODUCT -----------------------------'''
+@blueprint.route('/product', methods=['POST', 'PUT'])
+def create_product_route():
+    response = json.dumps(request.json)
+    return create_product(response)
+
+
+@blueprint.route('/product', methods=['GET'])
+def find_product_route():
+    #response = json.dumps(request.args)
+    return list_product()
 
 
 
