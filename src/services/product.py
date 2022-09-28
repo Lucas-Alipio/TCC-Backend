@@ -2,7 +2,6 @@ import json
 
 from bson import json_util, ObjectId
 from flask import Response
-#from werkzeug.security import generate_password_hash
 
 from config import mongo, bd_table
 
@@ -25,7 +24,7 @@ def create_product(self):
   product = get_product_name(name)
   if product:
     response = json_util.dumps({'message: Já existe um produto cadastrado com esse nome!!'})
-    return Response(response, mimetype='aplication/json', status=409)
+    return Response(response, mimetype='aplication/json', status=400)
 
   #Continue with normal user creation
   id = db.insert_one(
@@ -43,7 +42,9 @@ def create_product(self):
 
 '''----------------------------GET PRODUCT by name----------------------------'''
 def get_product_name(name):
-  return db.find_one({'name': name})
+  products = db.find_one({"name": str(name)})
+  response = json_util.dumps(products)
+  return Response(response, mimetype='application/json', status=200)
 
 '''----------------------------EDIT USER----------------------------'''
 def edit_product(id, name, brand, price, post_date):

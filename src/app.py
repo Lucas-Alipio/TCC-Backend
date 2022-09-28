@@ -4,10 +4,9 @@ import json
 from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 
-#from project
 from config import app
 from services.user import create_user, list_user
-from services.product import create_product, list_product
+from services.product import create_product, list_product, get_product_name
 
 
 
@@ -41,6 +40,10 @@ def find_product_route():
     #response = json.dumps(request.args)
     return list_product()
 
+@blueprint.route('/product/search', methods=['GET'])
+def search_product_route():
+    response = request.args.get('name')
+    return get_product_name(response)
 
 
 @app.route('/')
