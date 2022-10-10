@@ -1,4 +1,5 @@
-import json 
+import json
+import pandas as pd
 
 from bson import json_util, ObjectId
 from flask import Response
@@ -46,7 +47,25 @@ def get_product_name(name):
   response = json_util.dumps(products)
   return Response(response, mimetype='application/json', status=200)
 
-'''----------------------------EDIT USER----------------------------'''
+'''----------------------------GET/SEARCH PRODUCT by name's fragment----------------------------'''
+def get_all_products_name_frag(fragName):
+
+  fragName = fragName.lower()
+  data = json_util.dumps(db.find({}))
+
+  #dataFrame from pandas -> dfData[c][r] ... c=column r=row
+  #each row is a product , and the columns are the different types of data that each product has
+  dfData = pd.read_json(data)
+
+  searchFrag = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
+
+  searchFrag = searchFrag.to_json(orient='records')
+  
+  if data:
+    response = searchFrag
+    return Response(response, mimetype='application/json', status=200)
+
+'''----------------------------EDIT Product----------------------------'''
 def edit_product(id, name, brand, price, post_date):
 
   db.update_one(
