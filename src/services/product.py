@@ -11,41 +11,38 @@ db = mongo.get_database(bd_table).product
 '''----------------------------CREATE PRODUCT----------------------------'''
 def create_product(self):
   args = json.loads(self)
+
   id = args.get('_id')
   name = args.get('name')
   brand = args.get('brand')
   price = args.get('price')
+  address = args.get('address')
   post_date = args.get('post_date')
 
   #if id exists, then the method is to EDIT,
   if id is not None:
-    return edit_product(id, name, brand, price, post_date)
+    return edit_product(id, name, brand, price, address, post_date)
 
-  #Find data by name ---> if finds, then the name is already been used
-  product = get_product_name(name)
-  if product:
-    response = json_util.dumps({'message: Já existe um produto cadastrado com esse nome!!'})
-    return Response(response, mimetype='aplication/json', status=400)
-
-  #Continue with normal user creation
+  #Continue with normal product creation
   id = db.insert_one(
-    {'name': name, 'brand': brand, 'price': price, 'post_date': post_date}
+    {'name': name, 'brand': brand, 'price': price, 'address': address, 'post_date': post_date}
   )
   jsonData = {
     'id': str(id.inserted_id),
     'name': name,
     'brand': brand,
     'price': price,
+    'address': address,
     'post_date': post_date
   }
   response = json_util.dumps(jsonData)
   return Response(response, mimetype='application/json', status=201)
 
-'''----------------------------GET PRODUCT by name----------------------------'''
+'''----------------------------GET PRODUCT by name----------------------------
 def get_product_name(name):
   products = db.find_one({"name": str(name)})
   response = json_util.dumps(products)
-  return Response(response, mimetype='application/json', status=200)
+  return Response(response, mimetype='application/json', status=200)'''
 
 '''----------------------------GET/SEARCH PRODUCT by name's fragment----------------------------'''
 def get_all_products_name_frag(fragName):
@@ -61,22 +58,29 @@ def get_all_products_name_frag(fragName):
 
   searchFrag = searchFrag.to_json(orient='records')
   
-  if data:
+  #if finds product, then status 200-OK
+  if searchFrag:
     response = searchFrag
     return Response(response, mimetype='application/json', status=200)
+  
+  #if not find, then status 404-not found
+  response = json_util.dumps({'message': 'Nenhum registro encontrado'})
+  return Response(response, mimetype='application/json', status=404)
+  
 
 '''----------------------------EDIT Product----------------------------'''
-def edit_product(id, name, brand, price, post_date):
+def edit_product(id, name, brand, price, address, post_date):
 
   db.update_one(
     {'_id': ObjectId(id)},
-    {'$set': {'name': name, 'brand': brand, 'price': price, 'post_date': post_date}}
+    {'$set': {'name': name, 'brand': brand, 'price': price, 'address':address, 'post_date': post_date}}
   )
   jsonData = {
     'id': str(id),
     'name': name,
     'brand': brand,
     'price': price,
+    'address': address,
     'post_date': post_date
   }
   response = json_util.dumps(jsonData)
@@ -92,4 +96,4 @@ def list_product():
     return Response(response, mimetype='application/json', status=200)
 
   response = json_util.dumps({'message': 'Nenhum registro encontrado'})
-  return Response(response, mimetype='application/json', status=400)
+  return Response(response, mimetype='application/json', status=404)
