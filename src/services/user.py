@@ -2,9 +2,11 @@ import json
 
 from bson import json_util, ObjectId
 from flask import Response
-from werkzeug.security import generate_password_hash
 
-from config import mongo, bd_table
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from config import mongo, bd_table, auth
+
 
 db = mongo.get_database(bd_table).user
 
@@ -74,6 +76,25 @@ def edit_user(id, name, email, passw):
   }
   response = json_util.dumps(jsonData)
   return Response(response, mimetype='application/json', status=202)
+
+'''----------------------------Authentication USER----------------------------'''
+@auth.verify_password
+def verify_user(email, passw):
+
+  user = get_user_email(email)
+  print('user::::::::::', user)
+  if not user:
+    response = json_util.dumps({'message': 'Nenhum usuario com este email encontrado'})
+    return Response(response, mimetype='application/json', status=400)
+
+  if check_password_hash(user.get('password'), passw):
+    response = json_util.dumps(user)
+    return Response(response, mimetype='application/json', status=202)
+  
+  else:
+    response = json_util.dumps({'message': 'Senha digitada incorretamente'})
+    return Response(response, mimetype='application/json', status=401)
+
 
 
 '''----------------------------LIST ALL USERS----------------------------'''

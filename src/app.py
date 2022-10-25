@@ -2,10 +2,11 @@ import os
 import json
 
 from flask import Blueprint, request, jsonify
+
 from flask_cors import CORS
 
-from config import app
-from services.user import create_user, list_user
+from config import app, auth
+from services.user import create_user, verify_user
 from services.product import create_product, list_product, get_all_products_name_frag
 
 
@@ -19,12 +20,13 @@ CORS(app)
 def create_user_route():
     response = json.dumps(request.json)
     return create_user(response)
-
+    
 
 @blueprint.route('/user', methods=['GET'])
-def find_user_route():
-    #response = json.dumps(request.args)
-    return list_user()
+@auth.login_required
+def login_user_route():
+    
+    return auth.current_user()
 
 
 
