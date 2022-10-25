@@ -6,7 +6,7 @@ from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 
 from config import app, auth
-from services.user import create_user, verify_user
+from services.user import create_user
 from services.product import create_product, list_product, get_all_products_name_frag
 
 
