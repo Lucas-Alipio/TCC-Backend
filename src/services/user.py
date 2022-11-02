@@ -15,12 +15,13 @@ def create_user(self):
   args = json.loads(self)
   id = args.get('_id')
   name = args.get('name')
+  last_name = args.get('last_name')
   email = args.get('email')
   passw = args.get('password')
 
   #if id exists, then the method is to EDIT,
   if id is not None:
-    return edit_user(id, name, email, passw)
+    return edit_user(id, name, last_name, email, passw)
 
   #Find data by email ---> if finds, then the email is already been used
   user = get_user_email(email)
@@ -31,11 +32,12 @@ def create_user(self):
   #Continue with normal user creation
   hash_password = generate_password_hash(passw)
   id = db.insert_one(
-    {'name': name, 'email': email, 'password': hash_password}
+    {'name': name, 'last_name': last_name, 'email': email, 'password': hash_password}
   )
   jsonData = {
     'id': str(id.inserted_id),
     'name': name,
+    'last_name': last_name,
     'email': email,
     'password': hash_password
   }
@@ -47,18 +49,19 @@ def get_user_email(email):
   return db.find_one({'email': email})
 
 '''----------------------------EDIT USER----------------------------'''
-def edit_user(id, name, email, passw):
+def edit_user(id, name, last_name, email, passw):
 
   #if it has a password parameter, then....
   if passw is not None:
     hash_password = generate_password_hash(passw)
     db.update_one(
       {'_id': ObjectId(id)},
-      {'$set': {'name': name, 'email': email, 'password': hash_password}}
+      {'$set': {'name': name, 'last_name': last_name, 'email': email, 'password': hash_password}}
     )
     jsonData = {
       'id': str(id),
       'name': name,
+      'last_name': last_name,
       'email': email,
     }
     response = json_util.dumps(jsonData)
@@ -67,11 +70,12 @@ def edit_user(id, name, email, passw):
   #if it doesnt have a password parameter....
   db.update_one(
     {'_id': ObjectId(id)},
-    {'$set': {'name': name, 'email': email}}
+    {'$set': {'name': name, 'last_name': last_name, 'email': email}}
   )
   jsonData = {
     'id': str(id),
     'name': name,
+    'last_name': last_name,
     'email': email,
   }
   response = json_util.dumps(jsonData)
