@@ -69,6 +69,66 @@ def get_all_products_name_frag(fragName):
   return Response(response, mimetype='application/json', status=404)
   
 
+'''----------------------------GET PRODUCTS DAY----------------------------'''
+def get_products_day():
+  
+  #getting data from mongoDB
+  data = json_util.dumps(db.find({}))
+
+  #getting current date
+  currentDate = dt.date.today()
+  stringCurrentDate = currentDate.strftime("%d/%m/%y")
+
+  #dataFrame from pandas -> dfData[c][r] ... c=column r=row
+  #each row is a product , and the columns are the different types of data that each product has
+  dfData = pd.read_json(data)
+
+  #getting all products within that day
+  withinADay = dfData[dfData['post_date'] == stringCurrentDate]
+
+  withinADay = withinADay.to_json(orient='records')
+
+  #if finds product, then status 200-OK
+  if withinADay:
+    response = withinADay
+    return Response(response, mimetype='application/json', status=200)
+  
+  #if not find, then status 404-not found
+  response = json_util.dumps({'message': 'Nenhum registro encontrado'})
+  return Response(response, mimetype='application/json', status=404)
+
+
+'''----------------------------GET PRODUCTS WEEK----------------------------'''
+def get_products_week():
+  
+  #getting data from mongoDB
+  data = json_util.dumps(db.find({}))
+
+  #getting current date
+  currentDate = dt.date.today()
+  stringCurrentDate = currentDate.strftime("%d/%m/%y")
+  currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
+
+  #dataFrame from pandas -> dfData[c][r] ... c=column r=row
+  #each row is a product , and the columns are the different types of data that each product has
+  dfData = pd.read_json(data)
+
+  #getting products within that week
+  withinAWeek = dfData[
+    currentDate - dfData['post_date'].astype('datetime64[ns]') < dt.timedelta(7)
+  ]
+  withinAWeek = withinAWeek.to_json(orient='records')
+
+  #if finds product, then status 200-OK
+  if withinAWeek:
+    response = withinAWeek
+    return Response(response, mimetype='application/json', status=200)
+  
+  #if not find, then status 404-not found
+  response = json_util.dumps({'message': 'Nenhum registro encontrado'})
+  return Response(response, mimetype='application/json', status=404)
+
+
 '''----------------------------GET PRODUCTS INFO----------------------------'''
 def get_products_info():
 
