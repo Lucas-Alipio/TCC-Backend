@@ -155,11 +155,15 @@ def get_products_info():
   #counting the products within that day
   withinADay = dfData[dfData['post_date'] == stringCurrentDate]
   withinADay = withinADay['post_date'].count()
-
-  #counting the products within that week
-  withinAWeek = dfData[
-    currentDate - dfData['post_date'].astype('datetime64[ns]') < dt.timedelta(7)
+  
+  #getting products within that week
+  #converting string to date
+  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce')
+  dfData = dfData[
+    currentDate - dfData['post_date'] <= dt.timedelta(7)
   ]
+  
+  withinAWeek = pd.DataFrame(dfData)
 
   withinAWeek = withinAWeek['post_date'].count()
   
