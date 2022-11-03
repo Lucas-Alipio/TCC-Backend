@@ -114,9 +114,13 @@ def get_products_week():
   dfData = pd.read_json(data)
 
   #getting products within that week
-  withinAWeek = dfData[
-    currentDate - dfData['post_date'].astype('datetime64[ns]') < dt.timedelta(7)
+  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y") #converting string to date
+  dfData = dfData[
+    currentDate - dfData['post_date'] <= dt.timedelta(7)
   ]
+  
+  withinAWeek = pd.DataFrame(dfData)
+  withinAWeek['post_date'] = withinAWeek['post_date'].dt.strftime("%d/%m/%y")
   withinAWeek = withinAWeek.to_json(orient='records')
 
   #if finds product, then status 200-OK
