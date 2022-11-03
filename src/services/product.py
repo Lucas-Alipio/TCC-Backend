@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import datetime as dt
 
 from bson import json_util, ObjectId
 from flask import Response
@@ -67,6 +68,49 @@ def get_all_products_name_frag(fragName):
   response = json_util.dumps({'message': 'Nenhum registro encontrado'})
   return Response(response, mimetype='application/json', status=404)
   
+
+'''----------------------------GET PRODUCTS INFO----------------------------'''
+def get_products_info():
+
+  #getting data from mongoDB
+  data = json_util.dumps(db.find({}))
+
+  #getting current date
+  currentDate = dt.date.today()
+  stringCurrentDate = currentDate.strftime("%d/%m/%y")
+  currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
+  
+
+  #dataFrame from pandas -> dfData[c][r] ... c=column r=row
+  #each row is a product , and the columns are the different types of data that each product has
+  dfData = pd.read_json(data)
+
+  #couting the amount of products 
+  total = dfData['post_date'].count()
+
+  #counting the products within that day
+  withinADay = dfData[dfData['post_date'] == stringCurrentDate]
+  withinADay = withinADay['post_date'].count()
+
+  #counting the products within that week
+  withinAWeek = dfData[
+    currentDate - dfData['post_date'].astype('datetime64[ns]') < dt.timedelta(7)
+  ]
+
+  withinAWeek = withinAWeek['post_date'].count()
+  
+  #if there is any products, then
+  if data:
+    response = json_util.dumps({
+      'today': str(withinADay), 
+      'week': str(withinAWeek), 
+      'total': str(total)
+    })
+    return Response(response, mimetype='application/json', status=200)
+
+  #if there isn't, then status 404-not found
+  response = json_util.dumps({'message': 'Nenhum registro encontrado'})
+  return Response(response, mimetype='application/json', status=404)
 
 '''----------------------------EDIT Product----------------------------'''
 def edit_product(id, name, brand, price, address, post_date):

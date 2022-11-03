@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 from config import app, auth
 from services.user import create_user
-from services.product import create_product, list_product, get_all_products_name_frag
+from services.product import create_product, list_product, get_all_products_name_frag, get_products_info
 
 
 
@@ -41,6 +41,12 @@ def create_product_route():
 def find_product_route():
     #response = json.dumps(request.args)
     return list_product()
+
+
+@blueprint.route('/product/info', methods=['GET'])
+def find_productInfo_route():
+    return get_products_info()
+
 
 @blueprint.route('/product/search', methods=['GET'])
 def search_product_route():
