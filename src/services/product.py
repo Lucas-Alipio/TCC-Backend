@@ -76,7 +76,7 @@ def get_products_day():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() - dt.timedelta(hours=4)
+  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
   stringCurrentDate = currentDate.strftime("%d/%m/%y")
 
   #dataFrame from pandas -> dfData[c][r] ... c=column r=row
@@ -140,7 +140,7 @@ def get_products_info():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() - dt.timedelta(hours=4)
+  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
   stringCurrentDate = currentDate.strftime("%d/%m/%y")
   currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
   
