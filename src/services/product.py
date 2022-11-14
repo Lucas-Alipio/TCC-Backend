@@ -105,7 +105,7 @@ def get_products_week():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.date.today()
+  currentDate = dt.datetime.now() - dt.timedelta(hours=4)
   stringCurrentDate = currentDate.strftime("%d/%m/%y")
   currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
 
@@ -140,7 +140,7 @@ def get_products_info():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.date.today()
+  currentDate = dt.datetime.now() - dt.timedelta(hours=4)
   stringCurrentDate = currentDate.strftime("%d/%m/%y")
   currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
   
