@@ -77,6 +77,7 @@ def get_products_day():
 
   #getting current date
   currentDate = dt.date.today()
+  
   stringCurrentDate = currentDate.strftime("%d/%m/%y")
 
   #dataFrame from pandas -> dfData[c][r] ... c=column r=row
