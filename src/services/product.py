@@ -78,15 +78,19 @@ def get_products_day():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
-  stringCurrentDate = currentDate.strftime("%d/%m/%y")
+  currentDate = dt.datetime.now() #- dt.timedelta(hours=3)
+  stringCurrentDate1 = currentDate.strftime("%d/%m/%y")
+  stringCurrentDate2 = currentDate.strftime("%d/%m/%Y")
 
   #dataFrame from pandas -> dfData[c][r] ... c=column r=row
   #each row is a product , and the columns are the different types of data that each product has
   dfData = pd.read_json(data)
 
   #getting all products within that day
-  withinADay = dfData[dfData['post_date'] == stringCurrentDate]
+  withinADay1 = dfData[dfData['post_date'] == stringCurrentDate1]
+  withinADay2 = dfData[dfData['post_date'] == stringCurrentDate2]
+
+  withinADay = pd.concat([withinADay1, withinADay2])
 
   withinADay = withinADay.to_json(orient='records')
 
