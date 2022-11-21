@@ -55,8 +55,10 @@ def get_all_products_name_frag(fragName):
   #each row is a product , and the columns are the different types of data that each product has
   dfData = pd.read_json(data)
 
-  searchFrag = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
+  searchFrag1 = dfData[dfData['name'].str.lower().str.startswith(fragName) == True]
+  searchFrag2 = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
 
+  searchFrag = pd.concat([searchFrag1, searchFrag2])
   searchFrag = searchFrag.to_json(orient='records')
   
   #if finds product, then status 200-OK
