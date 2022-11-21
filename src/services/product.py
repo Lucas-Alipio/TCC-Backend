@@ -147,7 +147,7 @@ def get_products_info():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() #- dt.timedelta(hours=3)
+  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
   stringCurrentDate1 = currentDate.strftime("%d/%m/%y")
   stringCurrentDate2 = currentDate.strftime("%d/%m/%Y")
   currentDate = dt.datetime.strptime(stringCurrentDate1, "%d/%m/%y")
