@@ -124,7 +124,7 @@ def get_products_week():
   .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
   dfData = dfData[
     currentDate - dfData['post_date'] <= dt.timedelta(7)
-  ]
+  ].sort_values(by='post_date', ascending=False)
   
   withinAWeek = pd.DataFrame(dfData)
   withinAWeek['post_date'] = withinAWeek['post_date'].dt.strftime("%d/%m/%y")
