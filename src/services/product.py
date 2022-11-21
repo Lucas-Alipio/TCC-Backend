@@ -58,7 +58,9 @@ def get_all_products_name_frag(fragName):
   searchFrag1 = dfData[dfData['name'].str.lower().str.startswith(fragName) == True]
   searchFrag2 = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
 
-  searchFrag = pd.concat([searchFrag1, searchFrag2])
+  searchFrag = pd.concat([searchFrag1, searchFrag2])\
+  .drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
+
   searchFrag = searchFrag.to_json(orient='records')
   
   #if finds product, then status 200-OK
@@ -90,7 +92,8 @@ def get_products_day():
   withinADay1 = dfData[dfData['post_date'] == stringCurrentDate1]
   withinADay2 = dfData[dfData['post_date'] == stringCurrentDate2]
 
-  withinADay = pd.concat([withinADay1, withinADay2])
+  withinADay = pd.concat([withinADay1, withinADay2])\
+  .drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
 
   withinADay = withinADay.to_json(orient='records')
 
@@ -124,7 +127,8 @@ def get_products_week():
   .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
   dfData = dfData[
     currentDate - dfData['post_date'] <= dt.timedelta(7)
-  ].sort_values(by='post_date', ascending=False)
+  ].sort_values(by='post_date', ascending=False)\
+  .drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
   
   withinAWeek = pd.DataFrame(dfData)
   withinAWeek['post_date'] = withinAWeek['post_date'].dt.strftime("%d/%m/%y")
@@ -164,7 +168,8 @@ def get_products_info():
   withinADay1 = dfData[dfData['post_date'] == stringCurrentDate1]
   withinADay2 = dfData[dfData['post_date'] == stringCurrentDate2]
 
-  withinADay = pd.concat([withinADay1, withinADay2])
+  withinADay = pd.concat([withinADay1, withinADay2])\
+  .drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
 
   withinADay = withinADay['post_date'].count()
   
@@ -174,7 +179,7 @@ def get_products_info():
   .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
   dfData = dfData[
     currentDate - dfData['post_date'] <= dt.timedelta(7)
-  ]
+  ].drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
   
   withinAWeek = pd.DataFrame(dfData)
 
