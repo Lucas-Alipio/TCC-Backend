@@ -78,7 +78,7 @@ def get_products_day():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() #- dt.timedelta(hours=3)
+  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
   stringCurrentDate1 = currentDate.strftime("%d/%m/%y")
   stringCurrentDate2 = currentDate.strftime("%d/%m/%Y")
 
@@ -147,9 +147,10 @@ def get_products_info():
   data = json_util.dumps(db.find({}))
 
   #getting current date
-  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
-  stringCurrentDate = currentDate.strftime("%d/%m/%y")
-  currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
+  currentDate = dt.datetime.now() #- dt.timedelta(hours=3)
+  stringCurrentDate1 = currentDate.strftime("%d/%m/%y")
+  stringCurrentDate2 = currentDate.strftime("%d/%m/%Y")
+  currentDate = dt.datetime.strptime(stringCurrentDate1, "%d/%m/%y")
   
 
   #dataFrame from pandas -> dfData[c][r] ... c=column r=row
@@ -160,19 +161,24 @@ def get_products_info():
   total = dfData['post_date'].count()
 
   #counting the products within that day
-  withinADay = dfData[dfData['post_date'] == stringCurrentDate]
+  withinADay1 = dfData[dfData['post_date'] == stringCurrentDate1]
+  withinADay2 = dfData[dfData['post_date'] == stringCurrentDate2]
+
+  withinADay = pd.concat([withinADay1, withinADay2])
+
   withinADay = withinADay['post_date'].count()
   
   #getting products within that week
   #converting string to date
-  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce')
+  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce') \
+  .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
   dfData = dfData[
     currentDate - dfData['post_date'] <= dt.timedelta(7)
   ]
   
   withinAWeek = pd.DataFrame(dfData)
 
-  withinAWeek = withinAWeek['post_date'].count()
+  withinAWeek = withinAWeek['name'].count()
   
   #if there is any products, then
   if data:
