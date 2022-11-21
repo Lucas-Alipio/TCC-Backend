@@ -120,7 +120,8 @@ def get_products_week():
   dfData = pd.read_json(data)
 
   #getting products within that week
-  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce') #converting string to date
+  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce') \
+  .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
   dfData = dfData[
     currentDate - dfData['post_date'] <= dt.timedelta(7)
   ]
