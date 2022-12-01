@@ -24,6 +24,19 @@ def create_product(self):
   if id is not None:
     return edit_product(id, name, brand, price, address, post_date)
 
+  #if findProduct is not null, then product with the same data is already registered
+  findProduct = db.find_one({
+      "name": name,
+      'brand': brand,
+      'price': price,
+      'address': address,
+      'post_date': post_date
+    })
+  
+  if findProduct is not None:
+    response = json_util.dumps({'message': 'Produto já cadastrado com esses dados'})
+    return Response(response, mimetype='application/json', status=409)
+
   #Continue with normal product creation
   id = db.insert_one(
     {'name': name, 'brand': brand, 'price': price, 'address': address, 'post_date': post_date}
