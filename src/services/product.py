@@ -69,6 +69,9 @@ def get_all_products_name_frag(fragName):
   dfData = pd.read_json(data)
 
   searchFrag1 = dfData[dfData['name'].str.lower().str.startswith(fragName) == True]
+
+  
+
   searchFrag2 = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
 
   searchFrag = pd.concat([searchFrag1, searchFrag2])\
@@ -235,11 +238,6 @@ def list_product():
 
   #getting all data from db
   data = json_util.dumps(db.find({}))
-
-  #getting current date
-  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
-  stringCurrentDate = currentDate.strftime("%d/%m/%y")
-  currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
 
   #dataFrame from pandas -> dfData[c][r] ... c=column r=row
   #each row is a product , and the columns are the different types of data that each product has
