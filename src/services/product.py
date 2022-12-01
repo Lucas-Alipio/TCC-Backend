@@ -233,9 +233,32 @@ def edit_product(id, name, brand, price, address, post_date):
 '''----------------------------LIST ALL PRODUCTS----------------------------'''
 def list_product():
 
-  find = db.find({})
-  if find:
-    response = json_util.dumps(find)
+  #getting all data from db
+  data = json_util.dumps(db.find({}))
+
+  #getting current date
+  currentDate = dt.datetime.now() - dt.timedelta(hours=3)
+  stringCurrentDate = currentDate.strftime("%d/%m/%y")
+  currentDate = dt.datetime.strptime(stringCurrentDate, "%d/%m/%y")
+
+  #dataFrame from pandas -> dfData[c][r] ... c=column r=row
+  #each row is a product , and the columns are the different types of data that each product has
+  dfData = pd.read_json(data)
+
+  #passing type: strings to date
+  dfData['post_date'] = pd.to_datetime(dfData['post_date'], format="%d/%m/%y", errors='coerce') \
+  .fillna(pd.to_datetime(dfData['post_date'], format="%d/%m/%Y", errors='coerce'))
+
+  #Sorting products by date
+  dfData = dfData.sort_values(by='post_date', ascending=False)
+
+  #converting date to string, and passing dataFrame to json format
+  sortedData = pd.DataFrame(dfData)
+  sortedData['post_date'] = sortedData['post_date'].dt.strftime("%d/%m/%y")
+  sortedData = sortedData.to_json(orient='records')
+
+  if sortedData:
+    response = sortedData
     return Response(response, mimetype='application/json', status=200)
 
   response = json_util.dumps({'message': 'Nenhum registro encontrado'})
