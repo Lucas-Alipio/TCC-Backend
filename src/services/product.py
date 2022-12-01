@@ -68,19 +68,41 @@ def get_all_products_name_frag(fragName):
   #each row is a product , and the columns are the different types of data that each product has
   dfData = pd.read_json(data)
 
-  searchFrag1 = dfData[dfData['name'].str.lower().str.startswith(fragName) == True]
+  ''' getting data that STARTS WITH the fragment passed e sorting it by date '''
+  searchFrag1 = pd.DataFrame(dfData[dfData['name'].str.lower().str.startswith(fragName) == True])
 
+  #passing type: strings to date
+  searchFrag1['post_date'] = pd.to_datetime(searchFrag1['post_date'], format="%d/%m/%y", errors='coerce') \
+  .fillna(pd.to_datetime(searchFrag1['post_date'], format="%d/%m/%Y", errors='coerce'))
+
+  #Sorting products by date
+  searchFrag1 = searchFrag1.sort_values(by='post_date', ascending=False)
+
+  #converting date to string
+  searchFrag1Sorted = pd.DataFrame(searchFrag1)
+  searchFrag1Sorted['post_date'] = searchFrag1Sorted['post_date'].dt.strftime("%d/%m/%y")
   
+  ''' getting data that CONTAINS the fragment passed e sorting it by date '''
+  searchFrag2 = pd.DataFrame(dfData[dfData['name'].str.lower().str.contains(fragName) == True])
 
-  searchFrag2 = dfData[dfData['name'].str.lower().str.contains(fragName) == True]
+  #passing type: strings to date
+  searchFrag2['post_date'] = pd.to_datetime(searchFrag2['post_date'], format="%d/%m/%y", errors='coerce') \
+  .fillna(pd.to_datetime(searchFrag2['post_date'], format="%d/%m/%Y", errors='coerce'))
 
-  searchFrag = pd.concat([searchFrag1, searchFrag2])\
+  #Sorting products by date
+  searchFrag2 = searchFrag2.sort_values(by='post_date', ascending=False)
+
+  #converting date to string
+  searchFrag2Sorted = pd.DataFrame(searchFrag2)
+  searchFrag2Sorted['post_date'] = searchFrag2Sorted['post_date'].dt.strftime("%d/%m/%y")
+
+  #concatening the 2 types of Search together and droping duplicates
+  searchFrag = pd.concat([searchFrag1Sorted, searchFrag2Sorted])\
   .drop_duplicates(subset=['name', 'brand', 'price', 'post_date', 'address'])
-
-  searchFrag = searchFrag.to_json(orient='records')
   
   #if finds product, then status 200-OK
-  if searchFrag:
+  if not searchFrag.empty:
+    searchFrag = searchFrag.to_json(orient='records')
     response = searchFrag
     return Response(response, mimetype='application/json', status=200)
   
